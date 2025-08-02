@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 
+from ecommerceApiProject import settings
+
 
 # Create your models here.
 class CustomUser(AbstractUser):
@@ -69,3 +71,35 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name} in cart {self.cart.cart_code}"
+    
+class Review(models.Model):
+
+    RATING_CHOICE=[
+        (1,'1-poor'),
+        (2,'2-Fair'),
+        (3,'3-Good'),
+        (4,'4-Very Good'),
+        (5,'5-Exellent'),
+    ]
+
+    product=models.ForeignKey(Product,on_delete=models.CASCADE,related_name="reviews")
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="reviews")
+    rating=models.PositiveIntegerField(choices=RATING_CHOICE)
+    review=models.TextField()
+    created=models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return f"{self.user.user}'s review on {self.product.name}"
+    class Meta:
+        unique_together=["user","product"]
+        ordering=["created"]
+
+class ProductRating(models.Model):
+    product=models.OneToOneField(Product,on_delete=models.CASCADE,related_name='rating')
+    average_rating=models.FloatField(default=0.0)
+    total_reviews=models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.product.name}-{self.average_rating}-{self.total_reviews} reviews"
