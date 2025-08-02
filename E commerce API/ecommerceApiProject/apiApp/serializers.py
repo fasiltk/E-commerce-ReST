@@ -67,7 +67,7 @@ class CartStatSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=get_user_model()
-        feilds=["id","first_name","last_name","profile_picture_url"]
+        fields=["id","first_name","last_name","profile_picture_url"]
 
 
 
@@ -75,4 +75,12 @@ class ReviewSerializer(serializers.ModelSerializer):
     user=UserSerializer(read_only=True)
     class Meta:
         model=Review
-        fields=["id","user","rating","review","reated","updated"]
+        fields=["id","user","rating","review","created","updated"]
+
+
+class ProductRatingSerializer(serializers.ModelSerializer):
+    product = serializers.CharField(source='product.name', read_only=True)
+
+    class Meta:
+        model = ProductRating
+        fields = ['product', 'average_rating', 'total_reviews']

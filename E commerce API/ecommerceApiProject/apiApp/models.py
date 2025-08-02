@@ -91,7 +91,8 @@ class Review(models.Model):
 
 
     def __str__(self):
-        return f"{self.user.user}'s review on {self.product.name}"
+        return f"{self.user.email}'s review on {self.product.name}"
+
     class Meta:
         unique_together=["user","product"]
         ordering=["created"]
